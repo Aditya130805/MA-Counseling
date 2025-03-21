@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Testimonial {
@@ -15,7 +15,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: 1,
     content:
-      "Ms. Meenu Agarwal has really assisted me with everything I could have needed - from the initial brainstorming on my applications to the fag end of the process. It has been an excellent journey and I am really thankful!",
+      '"Ms. Meenu Agarwal has really assisted me with everything I could have needed - from the initial brainstorming on my applications to the fag end of the process. It has been an excellent journey and I am really thankful!"',
     name: "Tesuu Agarwal",
     title: "N/A",
     university: "Queen Mary University, London",
@@ -24,7 +24,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: 2,
     content:
-      "I am extremely grateful to you ma'am and all the work you have put into helping me obtain a really significant scholarship for studying abroad. Thank you!",
+      '"I am extremely grateful to you ma\'am and all the work you have put into helping me obtain a really significant scholarship for studying abroad. Thank you!"',
     name: "Jayesh Goel",
     title: "N/A",
     university: "University of Padua, Italy",
@@ -33,7 +33,7 @@ const TESTIMONIALS: Testimonial[] = [
   {
     id: 3,
     content:
-      "I've wanted to pursue construction management since a very tender age, and Ms. Meenu Agarwal has made it possible. At the University of Lincoln, I am really happy and I would suggest her to anybody who wants to study abroad.",
+      '"I\'ve wanted to pursue construction management since a very tender age, and Ms. Meenu Agarwal has made it possible. At the University of Lincoln, I am really happy and I would suggest her to anybody who wants to study abroad."',
     name: "Amit Chavan",
     title: "N/A",
     university: "University of Lincoln, UK",
@@ -41,9 +41,67 @@ const TESTIMONIALS: Testimonial[] = [
   },
 ];
 
+const TestimonialCard = ({
+  testimonial,
+  isActive,
+}: {
+  testimonial: Testimonial;
+  isActive: boolean;
+}) => {
+  return (
+    <div
+      className={cn(
+        "w-full flex flex-col md:flex-row gap-6 rounded-2xl p-6 md:p-8 shadow-lg transition-all duration-500",
+        "bg-white border border-indigo-100",
+        isActive
+          ? "opacity-100 scale-100"
+          : "opacity-0 scale-95 pointer-events-none absolute inset-0"
+      )}
+    >
+      {/* Left column - Profile section */}
+      <div className="md:w-1/3 flex flex-col items-center justify-center space-y-4 md:border-r md:border-indigo-100 md:pr-6">
+        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-4 border-white shadow-md bg-gradient-to-br from-indigo-50 to-purple-50 p-0.5">
+          <img
+            src={testimonial.image}
+            alt={testimonial.name}
+            className="w-full h-full object-cover rounded-full"
+            loading="lazy"
+          />
+        </div>
+
+        <div className="text-center w-full">
+          <h4 className="font-serif text-lg md:text-xl font-medium text-gray-900">
+            {testimonial.name}
+          </h4>
+          {testimonial.title !== "N/A" && (
+            <p className="text-indigo-600 text-sm md:text-base font-medium">
+              {testimonial.title}
+            </p>
+          )}
+          <p className="text-xs md:text-sm text-gray-600 mt-1">
+            {testimonial.university}
+          </p>
+        </div>
+      </div>
+
+      {/* Right column - Testimonial content */}
+      <div className="md:w-2/3 flex flex-col justify-center">
+        <div className="relative">
+          <div className="pl-6 pt-2">
+            <p className="text-gray-700 italic text-base md:text-lg leading-relaxed pr-2">
+              {testimonial.content}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Testimonials = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const testimonialRef = useRef<HTMLDivElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -67,12 +125,22 @@ const Testimonials = () => {
   }, []);
 
   useEffect(() => {
+    if (isHovered) return;
+
     const interval = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % TESTIMONIALS.length);
     }, 6000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isHovered]);
+
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev === 0 ? TESTIMONIALS.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev + 1) % TESTIMONIALS.length);
+  };
 
   return (
     <section
@@ -113,54 +181,40 @@ const Testimonials = () => {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <div className="relative min-h-[450px] md:min-h-[350px] mb-10">
+          {/* Testimonial Card Container */}
+          <div
+            className="relative mb-10 rounded-2xl"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+          >
             {TESTIMONIALS.map((testimonial, index) => (
-              <div
+              <TestimonialCard
                 key={testimonial.id}
-                className={cn(
-                  "absolute inset-0 flex flex-col md:flex-row items-center gap-8 transition-all duration-700 rounded-2xl p-8 shadow-lg bg-gradient-to-br from-white to-indigo-50/30 border border-indigo-100",
-                  activeIndex === index
-                    ? "opacity-100 translate-x-0 z-20"
-                    : index < activeIndex ||
-                      (activeIndex === 0 && index === TESTIMONIALS.length - 1)
-                    ? "opacity-0 -translate-x-full z-10"
-                    : "opacity-0 translate-x-full z-10"
-                )}
-              >
-                <div className="flex-shrink-0">
-                  <div className="relative w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-4 border-gradient-to-r from-indigo-100 to-purple-100 shadow-md">
-                    <img
-                      src={testimonial.image}
-                      alt={testimonial.name}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex-1 text-center md:text-left">
-                  <div className="mb-4">
-                    <Quote className="h-10 w-10 text-indigo-200 mx-auto md:mx-0" />
-                  </div>
-
-                  <p className="text-gray-700 mb-6 italic text-lg text-balance line-clamp-6 md:line-clamp-none overflow-auto max-h-[180px] md:max-h-none md:overflow-visible">
-                    "{testimonial.content}"
-                  </p>
-
-                  <div>
-                    <h4 className="font-serif text-lg font-medium text-gray-900">
-                      {testimonial.name}
-                    </h4>
-                    <p className="text-indigo-600">{testimonial.title}</p>
-                    <p className="text-sm text-gray-600">
-                      {testimonial.university}
-                    </p>
-                  </div>
-                </div>
-              </div>
+                testimonial={testimonial}
+                isActive={activeIndex === index}
+              />
             ))}
+
+            {/* Navigation Arrows */}
+            <div className="absolute inset-0 flex items-center justify-between pointer-events-none px-2 md:px-4">
+              <button
+                onClick={handlePrev}
+                className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md flex items-center justify-center text-indigo-600 hover:bg-white hover:text-indigo-700 transition-all pointer-events-auto"
+                aria-label="Previous testimonial"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+              <button
+                onClick={handleNext}
+                className="h-10 w-10 rounded-full bg-white/80 backdrop-blur-sm shadow-md flex items-center justify-center text-indigo-600 hover:bg-white hover:text-indigo-700 transition-all pointer-events-auto"
+                aria-label="Next testimonial"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
+          {/* Pagination Dots */}
           <div className="flex justify-center gap-2">
             {TESTIMONIALS.map((_, index) => (
               <button
@@ -169,7 +223,7 @@ const Testimonials = () => {
                   "w-3 h-3 rounded-full transition-all duration-300",
                   activeIndex === index
                     ? "bg-gradient-to-r from-indigo-500 to-purple-500 scale-100"
-                    : "bg-gray-200 scale-90"
+                    : "bg-gray-200 scale-90 hover:bg-gray-300"
                 )}
                 onClick={() => setActiveIndex(index)}
                 aria-label={`Go to testimonial ${index + 1}`}
