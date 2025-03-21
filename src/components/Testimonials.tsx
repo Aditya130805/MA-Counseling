@@ -113,7 +113,7 @@ const Testimonials = () => {
         </div>
 
         <div className="max-w-5xl mx-auto">
-          <div className="relative h-[400px] md:h-[320px] mb-10">
+          <div className="relative min-h-[450px] md:min-h-[350px] mb-10">
             {TESTIMONIALS.map((testimonial, index) => (
               <div
                 key={testimonial.id}
@@ -143,7 +143,7 @@ const Testimonials = () => {
                     <Quote className="h-10 w-10 text-indigo-200 mx-auto md:mx-0" />
                   </div>
 
-                  <p className="text-gray-700 mb-6 italic text-lg text-balance">
+                  <p className="text-gray-700 mb-6 italic text-lg text-balance line-clamp-6 md:line-clamp-none overflow-auto max-h-[180px] md:max-h-none md:overflow-visible">
                     "{testimonial.content}"
                   </p>
 
